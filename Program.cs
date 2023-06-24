@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using mvc1.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,9 +6,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+var host = builder.Configuration["DBHOST"] ?? "localhost";
+var port = builder.Configuration["DBPORT"] ?? "3306";
+var password = builder.Configuration["DBPASSWORD"] ?? "numsey";
 
-builder.Services.AddTransient<IRepository, TesteRepository>();
+string mySqlConnection = $"server={host};userid=root;pwd={password};port={port};database=produtosdb";
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IRepository, ProdutoRepository>();
+
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
 
 var app = builder.Build();
 
@@ -21,6 +29,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+PopulaDb.IncluiDadosDB(app);
 
 app.UseRouting();
 
