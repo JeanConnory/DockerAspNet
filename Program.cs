@@ -10,7 +10,7 @@ var host = builder.Configuration["DBHOST"] ?? "localhost";
 var port = builder.Configuration["DBPORT"] ?? "3306";
 var password = builder.Configuration["DBPASSWORD"] ?? "numsey";
 
-string mySqlConnection = $"server={host};userid=dunha;pwd={password};port={port};database=produtosdb";
+string mySqlConnection = $"server={host};userid=root;pwd={password};port={port};database=produtosdb";
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IRepository, ProdutoRepository>();
@@ -30,7 +30,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-PopulaDb.IncluiDadosDB(app);
+//PopulaDb.IncluiDadosDB(app);
 
 app.UseRouting();
 
